@@ -1,28 +1,19 @@
 package cz.uhk.fim;
 
+import cz.uhk.fim.rasterData.RasterBI;
+
 import javax.swing.*;
-import java.awt.*;
 
-public Class Canvas {
-
-    private final JFrame frame;
-    private final JPanel panel;
-
-    public canvas() {
-        frame = new JFrame();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        panel=new JPanel();
-        frame.add(panel, BorderLayout.CENTER);
-    }
-
-    static void main(){
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class main {
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new canvas();
+                 new Canvas(500,500);
+
             }
         });
     }
-}
+    }
