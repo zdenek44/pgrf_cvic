@@ -12,7 +12,13 @@ public class LineRasteruzerTrivial implements LineRasterizer {
         dx = x2-x1;
         dy = y2-y1;
 
-            k = dy / dx;
+            if (dx==0) {
+                for (int i = y1; i < y2; i++) {
+                    raster.setColor(x1,i,color);
+                }
+                return;
+            }
+            k =dy / dx;
 
         int x,y;
         int q = y1-(k*x1);

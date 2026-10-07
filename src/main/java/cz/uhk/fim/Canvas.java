@@ -42,7 +42,7 @@ public class Canvas {
 //        }
 
         LineRasteruzerTrivial line = new LineRasteruzerTrivial();
-        line.draw(image,50,0,30,200,0xFF00FF);
+        line.draw(image,50,0,50,200,0xFF00FF);
 
 
         panel =new JPanel(){
