@@ -2,6 +2,7 @@ package cz.uhk.fim.rasterops;
 
 import cz.uhk.fim.rasterData.RasterBI;
 
+import java.awt.*;
 import java.awt.image.Raster;
 
 public interface LineRasterizer {
@@ -17,5 +18,6 @@ public interface LineRasterizer {
      * @param color
      */
     void draw(RasterBI raster, int x1, int y1, int x2, int y2, int color);
+    void draw(RasterBI raster, Point pt1,Point pt2, int color);
     
 }
