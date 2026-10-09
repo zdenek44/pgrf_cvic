@@ -4,7 +4,10 @@ import cz.uhk.fim.rasterData.RasterBI;
 import cz.uhk.fim.rasterops.LineRasteruzerTrivial;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputAdapter;
+import javax.swing.event.MouseInputListener;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 public class Canvas {
@@ -51,6 +54,16 @@ public class Canvas {
                 image.present(g);
             }
         };
+
+        panel.addMouseListener(new MouseInputAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                line.draw(image,0,0,(int)e.getX(),(int)e.getY(),0xFF00FF);
+                System.out.println(e.getX()+" "+e.getY());
+                panel.repaint();
+            }
+            
+        });
 
         panel.setPreferredSize(new Dimension(width, height));
         frame.add(panel, BorderLayout.CENTER);
