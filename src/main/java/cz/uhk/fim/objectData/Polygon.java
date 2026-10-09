@@ -25,4 +25,18 @@ public class Polygon {
         newPoints.add(point);
         return new Polygon(newPoints);
     }
+
+    public List<LineSegment> getLineSegments() {
+        final List<LineSegment> lineSegments = new ArrayList<>();
+        for (int i = 0; i <= points.size(); i++) {
+            if (i == points.size()) {
+                lineSegments.add(new LineSegment(points.get(i),points.get(0)));
+                return lineSegments;
+            }
+
+            lineSegments.add(new LineSegment(points.get(i), points.get(i + 1)));
+        }
+        return lineSegments;
+    }
+
 }
