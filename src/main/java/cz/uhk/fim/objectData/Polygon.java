@@ -47,6 +47,22 @@ public class Polygon {
         }
     }
 
+    public int getInPointProximity(Point pt){
+        int x,y;
+        int offset = 20;
+        for (int i = 0; i<points.size();i++){
+            x = points.get(i).x;
+            y = points.get(i).y;
+            if (pt.x<x+offset && pt.x>x-offset && pt.y>y-offset && pt.y<y+offset){
+                return i;
+            }
+        }
+        return -1;
+    }
 
+    public void updatePoint(int which,int x,int y){
+        points.get(which).x = x;
+        points.get(which).y = y;
+    }
 
 }

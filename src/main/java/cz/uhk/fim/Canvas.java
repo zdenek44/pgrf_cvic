@@ -2,6 +2,7 @@ package cz.uhk.fim;
 
 import cz.uhk.fim.objectData.Polygon;
 import cz.uhk.fim.rasterData.RasterBI;
+import cz.uhk.fim.rasterops.LineRasterizer;
 import cz.uhk.fim.rasterops.LineRasterizerTrivial;
 import cz.uhk.fim.rasterops.PolygonRasterizer;
 
@@ -11,102 +12,36 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
-import java.util.List;
 
 import static java.awt.event.MouseEvent.*;
 
 public class Canvas {
     private final JFrame frame;
-    private final JPanel panel;
+    private JPanel panel;
     private final JPanel menuListPane;
     private final JScrollPane scrollPane;
     private final RasterBI image;
+    private final JButton add;
     private int currentObject;
+    private boolean isDraggingPoint = false;
+    private int selectedPoint;
     private final ArrayList<cz.uhk.fim.objectData.Polygon> objects;
 
-    private final LineRasterizerTrivial line = new LineRasterizerTrivial();
+    private final LineRasterizer line = new LineRasterizerTrivial();
     private final PolygonRasterizer poly = new PolygonRasterizer();
 
     public Canvas(final int width,final int height) {
 
+        add = new JButton("add object");
         frame = new JFrame();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         image = new RasterBI(width, height);
-
         objects = new ArrayList<>();
-        objects.add(new Polygon());
-
-
-
-        panel =new JPanel(){
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                image.present(g);
-            }
-        };
-
-        panel.repaint();
-        panel.addMouseListener(new MouseInputAdapter() {
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                image.clear(0x000000);
-                objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
-                poly.draw(image,objects.get(currentObject),line,0xFF00FF);
-                panel.repaint();
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                image.clear(0x000000);
-                objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
-                poly.draw(image,objects.get(currentObject),line,0xFF00FF);
-                panel.repaint();
-            }
-        });
-
-        panel.addMouseMotionListener(new MouseMotionAdapter() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                image.clear(0x000000);
-                Point pt = new Point(e.getX(),e.getY());
-                poly.drawPreview(image,objects.get(currentObject),pt,line,0xFF0000);
-                panel.repaint();
-            }
-        });
-
         menuListPane = new JPanel();
-        menuListPane.setLayout(new FlowLayout());
-        menuListPane.setPreferredSize(new Dimension(110,1000));
-
-        JButton add = new JButton("add object");
-        add.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add.setAlignmentY(Component.CENTER_ALIGNMENT);
-        add.setPreferredSize(new Dimension(100,30));
-
-        add.addMouseListener(new MouseInputAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                switch (e.getButton()){
-                    case BUTTON1:
-                        objects.add(new Polygon());
-                        update_list();
-                        menuListPane.repaint();
-                        menuListPane.revalidate();
-                        break;
-                    case BUTTON2:
-                        break;
-                }
-            }
-        });
-        menuListPane.add(add);
-
         scrollPane = new JScrollPane(menuListPane);
-        scrollPane.createVerticalScrollBar();
 
 
+        initialize();
+        setMouseEvents();
         update_list();
 
 
@@ -115,10 +50,6 @@ public class Canvas {
         frame.pack();
 
     }
-
-    private void render(){
-        //todo
-        }
 
     private void update_list(){
 
@@ -157,6 +88,121 @@ public class Canvas {
             poly.draw(image, objects.get(currentObject), line, 0xFF00FF);
         }
         panel.repaint();
+    }
+
+    private void initialize(){
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //initialize first object
+        objects.add(new Polygon());
+
+        //set add button
+        add.setAlignmentX(Component.CENTER_ALIGNMENT);
+        add.setAlignmentY(Component.CENTER_ALIGNMENT);
+        add.setPreferredSize(new Dimension(100,30));
+
+        panel =new JPanel(){
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                image.present(g);
+            }
+        };
+
+        menuListPane.setLayout(new FlowLayout());
+        menuListPane.setPreferredSize(new Dimension(110,1000));
+        menuListPane.add(add);
+
+        scrollPane.createVerticalScrollBar();
+
+        panel.repaint();
+    }
+
+    private void setMouseEvents(){
+        panel.addMouseListener(new MouseInputAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                switch (e.getButton()){
+                    case BUTTON1:
+                        image.clear(0x000000);
+                        objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
+                        poly.draw(image,objects.get(currentObject),line,0xFF00FF);
+                        panel.repaint();
+                        break;
+                    case BUTTON3:
+
+                        break;
+                }
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                switch (e.getButton()) {
+                    case BUTTON1:
+                        break;
+                    case BUTTON3:
+                        selectedPoint = objects.get(currentObject).getInPointProximity(new Point(e.getX(),e.getY()));
+                        System.out.println("proximity" + selectedPoint);
+                        if (selectedPoint != -1){
+                            isDraggingPoint = true;
+                        }
+
+                        break;
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                System.out.println(e.getButton());
+                switch (e.getButton()){
+                    case BUTTON1:
+                        image.clear(0x000000);
+                        objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
+                        poly.draw(image,objects.get(currentObject),line,0xFF00FF);
+                        break;
+                    case BUTTON3:
+                        objects.get(currentObject).updatePoint(selectedPoint,e.getX(),e.getY());
+                        isDraggingPoint = false;
+                        break;
+                }
+                panel.repaint();
+            }
+        });
+
+        add.addMouseListener(new MouseInputAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                switch (e.getButton()){
+                    case BUTTON1:
+                        objects.add(new Polygon());
+                        update_list();
+                        menuListPane.repaint();
+                        menuListPane.revalidate();
+                        break;
+                    case BUTTON2:
+                        break;
+                }
+            }
+        });
+
+        panel.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                image.clear(0x000000);
+                if (isDraggingPoint){
+                    objects.get(currentObject).updatePoint(selectedPoint,e.getX(),e.getY());
+                    updateCanvas();
+                }else {
+                    System.out.println(e.getButton());
+
+                    Point pt = new Point(e.getX(), e.getY());
+                    poly.drawPreview(image, objects.get(currentObject), pt, line, 0xFF00FF);
+                }
+                panel.repaint();
+            }
+        });
     }
 
 }

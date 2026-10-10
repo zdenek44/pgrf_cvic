@@ -19,8 +19,9 @@ public class PolygonRasterizer {
             y1 = listSegments.get(i).p1.y;
             x2 = listSegments.get(i).p2.x;
             y2 = listSegments.get(i).p2.y;
-            lineRasterizer.draw(raster,x1,y1,x2,y2,color);
-        }
+                lineRasterizer.draw(raster, x1, y1, x2, y2, color);
+
+            }
 
     }
 
@@ -33,8 +34,11 @@ public class PolygonRasterizer {
             y1 = listSegments.get(i).p1.y;
             x2 = listSegments.get(i).p2.x;
             y2 = listSegments.get(i).p2.y;
-
-            lineRasterizer.draw(raster,x1,y1,x2,y2,color);
+            if (i>listSegments.size()-3) {
+                lineRasterizer.draw(raster, x1, y1, x2, y2, 0xFF0000);
+            }else {
+                lineRasterizer.draw(raster, x1, y1, x2, y2, color);
+            }
         }
     }
 }
