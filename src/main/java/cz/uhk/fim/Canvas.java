@@ -58,6 +58,8 @@ public class Canvas {
         setEvents();
         update_list();
 
+        panel.setPreferredSize(new Dimension(width,height));
+
         frame.add(panel, BorderLayout.CENTER);
         frame.add(scrollPane,BorderLayout.EAST);
         frame.pack();
@@ -127,8 +129,9 @@ public class Canvas {
             }
         };
 
+
         menuListPane.setLayout(new FlowLayout());
-        menuListPane.setPreferredSize(new Dimension(130,1000));
+        menuListPane.setPreferredSize(new Dimension(130,500));
         menuListPane.add(switchLineRasterizer);
         menuListPane.add(add);
 
