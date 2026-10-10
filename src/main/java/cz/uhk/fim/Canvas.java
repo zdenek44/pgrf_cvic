@@ -126,7 +126,7 @@ public class Canvas {
                 switch (e.getButton()){
                     case BUTTON1:
                         image.clear(0x000000);
-                        objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
+                       // objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
                         poly.draw(image,objects.get(currentObject),line,0xFF00FF);
                         panel.repaint();
                         break;
@@ -141,6 +141,9 @@ public class Canvas {
             public void mousePressed(MouseEvent e) {
                 switch (e.getButton()) {
                     case BUTTON1:
+                        if (objects.get(currentObject).isEmpty()){
+                            objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
+                        }
                         break;
                     case BUTTON3:
                         selectedPoint = objects.get(currentObject).getInPointProximity(new Point(e.getX(),e.getY()));
@@ -159,7 +162,7 @@ public class Canvas {
                 switch (e.getButton()){
                     case BUTTON1:
                         image.clear(0x000000);
-                        objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
+                       objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
                         poly.draw(image,objects.get(currentObject),line,0xFF00FF);
                         break;
                     case BUTTON3:
@@ -202,6 +205,7 @@ public class Canvas {
                 }
                 panel.repaint();
             }
+
         });
     }
 
