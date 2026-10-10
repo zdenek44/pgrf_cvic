@@ -69,4 +69,8 @@ public class Polygon {
         points = new ArrayList<>();
     }
 
+    public void updatePoint(int selectedPoint, Point point) {
+        points.get(selectedPoint).setLocation(point);
+
+    }
 }

@@ -26,7 +26,7 @@ public class Canvas {
     private final JButton switchLineRasterizer;
     private boolean isDraggingPoint = false;
     private int selectedPoint;
-    private int whichLineRasterizer = 1;
+    private int whichLineRasterizer = 0;
     private final ArrayList<cz.uhk.fim.objectData.Polygon> objects;
 
     private LineRasterizer line = new LineRasterizerTrivial();
@@ -161,11 +161,11 @@ public class Canvas {
                 switch (e.getButton()) {
                     case BUTTON1:
                         if (objects.get(currentObject).isEmpty()){
-                            objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
+                            objects.get(currentObject).add_points(withinBoundaries(e.getX(),e.getY()));
                         }
                         break;
                     case BUTTON3:
-                        selectedPoint = objects.get(currentObject).getInPointProximity(new Point(e.getX(),e.getY()));
+                        selectedPoint = objects.get(currentObject).getInPointProximity(withinBoundaries(e.getX(),e.getY()));
                         System.out.println("proximity" + selectedPoint);
                         if (selectedPoint != -1){
                             isDraggingPoint = true;
@@ -179,11 +179,11 @@ public class Canvas {
             public void mouseReleased(MouseEvent e) {
                 switch (e.getButton()){
                     case BUTTON1:
-                       objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
+                       objects.get(currentObject).add_points(withinBoundaries(e.getX(),e.getY()));
                         break;
                     case BUTTON3:
                         if (selectedPoint!=-1) {
-                            objects.get(currentObject).updatePoint(selectedPoint, e.getX(), e.getY());
+                            objects.get(currentObject).updatePoint(selectedPoint, withinBoundaries(e.getX(), e.getY()));
                         }
                         isDraggingPoint = false;
                         break;
@@ -236,14 +236,32 @@ public class Canvas {
             public void mouseDragged(MouseEvent e) {
                 image.clear(0x000000);
                 if (isDraggingPoint){
-                    objects.get(currentObject).updatePoint(selectedPoint,e.getX(),e.getY());
+                    objects.get(currentObject).updatePoint(selectedPoint,withinBoundaries(e.getX(),e.getY()));
                     updateCanvas();
                 }else {
-                    Point pt = new Point(e.getX(), e.getY());
+                    Point pt = withinBoundaries(e.getX(), e.getY());
                     poly.drawPreview(image, objects.get(currentObject), pt, line, 0xFF00FF);
                 }
                 panel.repaint();
             }
         });
     }
+
+    public Point withinBoundaries(int x,int y){
+        int width = image.getWidth();
+        int height = image.getHeight();
+        if (x>width){
+            x = width;
+        }else if (x<0){
+            x = 0;
+        }
+
+        if (y>height){
+            y = height;
+        } else if (y<0) {
+            y = 0;
+        }
+        return new Point(x,y);
+    }
+
 }
