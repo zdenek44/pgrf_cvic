@@ -32,6 +32,17 @@ public class Canvas {
     private LineRasterizer line = new LineRasterizerTrivial();
     private final PolygonRasterizer poly = new PolygonRasterizer();
 
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                new Canvas (500,500);
+
+            }
+        });
+    }
+
     public Canvas(final int width,final int height) {
 
         add = new JButton("add object");
@@ -46,7 +57,6 @@ public class Canvas {
         initialize();
         setEvents();
         update_list();
-
 
         frame.add(panel, BorderLayout.CENTER);
         frame.add(scrollPane,BorderLayout.EAST);
@@ -118,7 +128,7 @@ public class Canvas {
         };
 
         menuListPane.setLayout(new FlowLayout());
-        menuListPane.setPreferredSize(new Dimension(110,1000));
+        menuListPane.setPreferredSize(new Dimension(130,1000));
         menuListPane.add(switchLineRasterizer);
         menuListPane.add(add);
 
