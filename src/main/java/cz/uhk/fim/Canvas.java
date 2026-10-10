@@ -10,8 +10,7 @@ import cz.uhk.fim.rasterops.PolygonRasterizer;
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 import static java.awt.event.MouseEvent.*;
@@ -125,11 +124,22 @@ public class Canvas {
 
         scrollPane.createVerticalScrollBar();
 
-        panel.repaint();
+        updateCanvas();
     }
 
     private void setEvents(){
 
+        InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = panel.getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke('c'), "actionC");
+        actionMap.put("actionC", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               objects.get(currentObject).emptyObject();
+               updateCanvas();
+            }
+        });
 
         panel.addMouseListener(new MouseInputAdapter() {
 
@@ -137,9 +147,7 @@ public class Canvas {
             public void mouseClicked(MouseEvent e) {
                 switch (e.getButton()){
                     case BUTTON1:
-                        image.clear(0x000000);
-                        poly.draw(image,objects.get(currentObject),line,0xFF00FF);
-                        panel.repaint();
+                        updateCanvas();
                         break;
                     case BUTTON3:
 
@@ -171,9 +179,7 @@ public class Canvas {
             public void mouseReleased(MouseEvent e) {
                 switch (e.getButton()){
                     case BUTTON1:
-                        image.clear(0x000000);
                        objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
-                        poly.draw(image,objects.get(currentObject),line,0xFF00FF);
                         break;
                     case BUTTON3:
                         if (selectedPoint!=-1) {
@@ -183,7 +189,6 @@ public class Canvas {
                         break;
                 }
                 updateCanvas();
-                panel.repaint();
             }
         });
 
@@ -214,11 +219,11 @@ public class Canvas {
                 }
 
                 switch (whichLineRasterizer){
-                    case 1:
+                    case 0:
                         switchLineRasterizer.setText("Trivial");
                         line = new LineRasterizerTrivial();
                         break;
-                    case 2:
+                    case 1:
                         switchLineRasterizer.setText("DDA");
                         line = new LineRasterizerDDA();
                         break;

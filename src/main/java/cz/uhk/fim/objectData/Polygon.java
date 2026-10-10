@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Polygon {
 
-    private final List<Point> points;
+    private List<Point> points;
 
     public Polygon(List<Point> points){
         this.points = points;
@@ -63,6 +63,10 @@ public class Polygon {
     public void updatePoint(int which,int x,int y){
         points.get(which).x = x;
         points.get(which).y = y;
+    }
+
+    public void emptyObject(){
+        points = new ArrayList<>();
     }
 
 }
