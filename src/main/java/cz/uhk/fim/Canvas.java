@@ -3,6 +3,7 @@ package cz.uhk.fim;
 import cz.uhk.fim.objectData.Polygon;
 import cz.uhk.fim.rasterData.RasterBI;
 import cz.uhk.fim.rasterops.LineRasterizer;
+import cz.uhk.fim.rasterops.LineRasterizerDDA;
 import cz.uhk.fim.rasterops.LineRasterizerTrivial;
 import cz.uhk.fim.rasterops.PolygonRasterizer;
 
@@ -23,16 +24,19 @@ public class Canvas {
     private final RasterBI image;
     private final JButton add;
     private int currentObject;
+    private final JButton switchLineRasterizer;
     private boolean isDraggingPoint = false;
     private int selectedPoint;
+    private int whichLineRasterizer = 1;
     private final ArrayList<cz.uhk.fim.objectData.Polygon> objects;
 
-    private final LineRasterizer line = new LineRasterizerTrivial();
+    private LineRasterizer line = new LineRasterizerTrivial();
     private final PolygonRasterizer poly = new PolygonRasterizer();
 
     public Canvas(final int width,final int height) {
 
         add = new JButton("add object");
+        switchLineRasterizer = new JButton("Trivial");
         frame = new JFrame();
         image = new RasterBI(width, height);
         objects = new ArrayList<>();
@@ -41,7 +45,7 @@ public class Canvas {
 
 
         initialize();
-        setMouseEvents();
+        setEvents();
         update_list();
 
 
@@ -97,6 +101,11 @@ public class Canvas {
         //initialize first object
         objects.add(new Polygon());
 
+        //set switching button
+        switchLineRasterizer.setAlignmentX(Component.CENTER_ALIGNMENT);
+        switchLineRasterizer.setAlignmentY(Component.CENTER_ALIGNMENT);
+        switchLineRasterizer.setPreferredSize(new Dimension(100,50));
+
         //set add button
         add.setAlignmentX(Component.CENTER_ALIGNMENT);
         add.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -111,6 +120,7 @@ public class Canvas {
 
         menuListPane.setLayout(new FlowLayout());
         menuListPane.setPreferredSize(new Dimension(110,1000));
+        menuListPane.add(switchLineRasterizer);
         menuListPane.add(add);
 
         scrollPane.createVerticalScrollBar();
@@ -118,7 +128,9 @@ public class Canvas {
         panel.repaint();
     }
 
-    private void setMouseEvents(){
+    private void setEvents(){
+
+
         panel.addMouseListener(new MouseInputAdapter() {
 
             @Override
@@ -164,13 +176,17 @@ public class Canvas {
                         poly.draw(image,objects.get(currentObject),line,0xFF00FF);
                         break;
                     case BUTTON3:
-                        objects.get(currentObject).updatePoint(selectedPoint,e.getX(),e.getY());
+                        if (selectedPoint!=-1) {
+                            objects.get(currentObject).updatePoint(selectedPoint, e.getX(), e.getY());
+                        }
                         isDraggingPoint = false;
                         break;
                 }
+                updateCanvas();
                 panel.repaint();
             }
         });
+
 
         add.addMouseListener(new MouseInputAdapter() {
             @Override
@@ -183,6 +199,28 @@ public class Canvas {
                         menuListPane.revalidate();
                         break;
                     case BUTTON2:
+                        break;
+                }
+            }
+        });
+
+        switchLineRasterizer.addMouseListener(new MouseInputAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (whichLineRasterizer+1 == 2){
+                    whichLineRasterizer = 0;
+                }else {
+                    whichLineRasterizer++;
+                }
+
+                switch (whichLineRasterizer){
+                    case 1:
+                        switchLineRasterizer.setText("Trivial");
+                        line = new LineRasterizerTrivial();
+                        break;
+                    case 2:
+                        switchLineRasterizer.setText("DDA");
+                        line = new LineRasterizerDDA();
                         break;
                 }
             }
