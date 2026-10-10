@@ -126,7 +126,6 @@ public class Canvas {
                 switch (e.getButton()){
                     case BUTTON1:
                         image.clear(0x000000);
-                       // objects.get(currentObject).add_points(new Point(e.getX(),e.getY()));
                         poly.draw(image,objects.get(currentObject),line,0xFF00FF);
                         panel.repaint();
                         break;
@@ -158,7 +157,6 @@ public class Canvas {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                System.out.println(e.getButton());
                 switch (e.getButton()){
                     case BUTTON1:
                         image.clear(0x000000);
@@ -198,15 +196,11 @@ public class Canvas {
                     objects.get(currentObject).updatePoint(selectedPoint,e.getX(),e.getY());
                     updateCanvas();
                 }else {
-                    System.out.println(e.getButton());
-
                     Point pt = new Point(e.getX(), e.getY());
                     poly.drawPreview(image, objects.get(currentObject), pt, line, 0xFF00FF);
                 }
                 panel.repaint();
             }
-
         });
     }
-
 }
