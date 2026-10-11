@@ -20,10 +20,11 @@ public class Canvas {
     private JPanel panel;
     private final JPanel menuListPane;
     private final JScrollPane scrollPane;
-    private final RasterBI image;
     private final JButton add;
-    private int currentObject;
     private final JButton switchLineRasterizer;
+
+    private final RasterBI image;
+    private int currentObject;
     private boolean isDraggingPoint = false;
     private int selectedPoint;
     private int whichLineRasterizer = 0;
@@ -37,14 +38,14 @@ public class Canvas {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new Canvas (500,500);
+                new Canvas(500, 500);
 
             }
         });
     }
 
-    public Canvas(final int width,final int height) {
-
+    public Canvas(final int width, final int height) {
+        //initialize values
         add = new JButton("add object");
         switchLineRasterizer = new JButton("Trivial");
         frame = new JFrame();
@@ -53,59 +54,58 @@ public class Canvas {
         menuListPane = new JPanel();
         scrollPane = new JScrollPane(menuListPane);
 
-
         initialize();
         setEvents();
         update_list();
 
-        panel.setPreferredSize(new Dimension(width,height));
+        panel.setPreferredSize(new Dimension(width, height));
 
         frame.add(panel, BorderLayout.CENTER);
-        frame.add(scrollPane,BorderLayout.EAST);
+        frame.add(scrollPane, BorderLayout.EAST);
         frame.pack();
 
     }
 
-    private void update_list(){
+    private void update_list() {
 
-            JButton lb = new JButton(Integer.toString(objects.size()-1));
-            lb.setAlignmentX(Component.CENTER_ALIGNMENT);
-            lb.setAlignmentY(Component.CENTER_ALIGNMENT);
-            lb.setPreferredSize(new Dimension(100,30));
-            lb.addMouseListener(new MouseInputAdapter(){
+        JButton lb = new JButton(Integer.toString(objects.size() - 1));
+        lb.setAlignmentX(Component.CENTER_ALIGNMENT);
+        lb.setAlignmentY(Component.CENTER_ALIGNMENT);
+        lb.setPreferredSize(new Dimension(100, 30));
+        lb.addMouseListener(new MouseInputAdapter() {
 
-                @Override
-                public void mouseClicked(MouseEvent e) {
+            @Override
+            public void mouseClicked(MouseEvent e) {
 
-                    switch (e.getButton()) {
-                        case BUTTON1:
-                            setCurrentObject(Integer.parseInt(lb.getText()));
-                            break;
-                        case BUTTON2:
-                            break;
-                    }
+                switch (e.getButton()) {
+                    case BUTTON1:
+                        setCurrentObject(Integer.parseInt(lb.getText()));
+                        break;
+                    case BUTTON2:
+                        break;
                 }
-            });
-            menuListPane.add(lb);
+            }
+        });
+        menuListPane.add(lb);
     }
-
-    private void setCurrentObject(int i){
+    //which object is being edited
+    private void setCurrentObject(int i) {
         currentObject = i;
-       updateCanvas();
+        updateCanvas();
 
     }
-
-    void updateCanvas(){
+    //redraws canvas
+    void updateCanvas() {
         image.clear(0x000000);
-        if (objects.get(currentObject).isEmpty()){
+        if (objects.get(currentObject).isEmpty()) {
             System.out.println("empty");
-        }else {
+        } else {
             poly.draw(image, objects.get(currentObject), line, 0xFF00FF);
         }
         panel.repaint();
     }
 
-    private void initialize(){
+    private void initialize() {
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -115,14 +115,14 @@ public class Canvas {
         //set switching button
         switchLineRasterizer.setAlignmentX(Component.CENTER_ALIGNMENT);
         switchLineRasterizer.setAlignmentY(Component.CENTER_ALIGNMENT);
-        switchLineRasterizer.setPreferredSize(new Dimension(100,50));
+        switchLineRasterizer.setPreferredSize(new Dimension(100, 50));
 
         //set add button
         add.setAlignmentX(Component.CENTER_ALIGNMENT);
         add.setAlignmentY(Component.CENTER_ALIGNMENT);
-        add.setPreferredSize(new Dimension(100,30));
+        add.setPreferredSize(new Dimension(100, 30));
 
-        panel =new JPanel(){
+        panel = new JPanel() {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
                 image.present(g);
@@ -131,7 +131,7 @@ public class Canvas {
 
 
         menuListPane.setLayout(new FlowLayout());
-        menuListPane.setPreferredSize(new Dimension(130,500));
+        menuListPane.setPreferredSize(new Dimension(130, 500));
         menuListPane.add(switchLineRasterizer);
         menuListPane.add(add);
 
@@ -139,8 +139,8 @@ public class Canvas {
 
         updateCanvas();
     }
-
-    private void setEvents(){
+    //sets mouse and keyboard events
+    private void setEvents() {
 
         InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = panel.getActionMap();
@@ -149,8 +149,8 @@ public class Canvas {
         actionMap.put("actionC", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               objects.get(currentObject).emptyObject();
-               updateCanvas();
+                objects.get(currentObject).emptyObject();
+                updateCanvas();
             }
         });
 
@@ -158,7 +158,7 @@ public class Canvas {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                switch (e.getButton()){
+                switch (e.getButton()) {
                     case BUTTON1:
                         updateCanvas();
                         break;
@@ -173,14 +173,14 @@ public class Canvas {
             public void mousePressed(MouseEvent e) {
                 switch (e.getButton()) {
                     case BUTTON1:
-                        if (objects.get(currentObject).isEmpty()){
-                            objects.get(currentObject).add_points(withinBoundaries(e.getX(),e.getY()));
+                        if (objects.get(currentObject).isEmpty()) {
+                            objects.get(currentObject).add_points(withinBoundaries(e.getX(), e.getY()));
                         }
                         break;
                     case BUTTON3:
-                        selectedPoint = objects.get(currentObject).getInPointProximity(withinBoundaries(e.getX(),e.getY()));
+                        selectedPoint = objects.get(currentObject).getInPointProximity(withinBoundaries(e.getX(), e.getY()));
                         System.out.println("proximity" + selectedPoint);
-                        if (selectedPoint != -1){
+                        if (selectedPoint != -1) {
                             isDraggingPoint = true;
                         }
 
@@ -190,12 +190,12 @@ public class Canvas {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                switch (e.getButton()){
+                switch (e.getButton()) {
                     case BUTTON1:
-                       objects.get(currentObject).add_points(withinBoundaries(e.getX(),e.getY()));
+                        objects.get(currentObject).add_points(withinBoundaries(e.getX(), e.getY()));
                         break;
                     case BUTTON3:
-                        if (selectedPoint!=-1) {
+                        if (selectedPoint != -1) {
                             objects.get(currentObject).updatePoint(selectedPoint, withinBoundaries(e.getX(), e.getY()));
                         }
                         isDraggingPoint = false;
@@ -209,7 +209,7 @@ public class Canvas {
         add.addMouseListener(new MouseInputAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                switch (e.getButton()){
+                switch (e.getButton()) {
                     case BUTTON1:
                         objects.add(new Polygon());
                         update_list();
@@ -225,13 +225,13 @@ public class Canvas {
         switchLineRasterizer.addMouseListener(new MouseInputAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (whichLineRasterizer+1 == 2){
+                if (whichLineRasterizer + 1 == 2) {
                     whichLineRasterizer = 0;
-                }else {
+                } else {
                     whichLineRasterizer++;
                 }
 
-                switch (whichLineRasterizer){
+                switch (whichLineRasterizer) {
                     case 0:
                         switchLineRasterizer.setText("Trivial");
                         line = new LineRasterizerTrivial();
@@ -248,10 +248,10 @@ public class Canvas {
             @Override
             public void mouseDragged(MouseEvent e) {
                 image.clear(0x000000);
-                if (isDraggingPoint){
-                    objects.get(currentObject).updatePoint(selectedPoint,withinBoundaries(e.getX(),e.getY()));
+                if (isDraggingPoint) {
+                    objects.get(currentObject).updatePoint(selectedPoint, withinBoundaries(e.getX(), e.getY()));
                     updateCanvas();
-                }else {
+                } else {
                     Point pt = withinBoundaries(e.getX(), e.getY());
                     poly.drawPreview(image, objects.get(currentObject), pt, line, 0xFF00FF);
                 }
@@ -260,21 +260,21 @@ public class Canvas {
         });
     }
 
-    public Point withinBoundaries(int x,int y){
+    public Point withinBoundaries(int x, int y) {
         int width = image.getWidth();
         int height = image.getHeight();
-        if (x>width){
+        if (x > width) {
             x = width;
-        }else if (x<0){
+        } else if (x < 0) {
             x = 0;
         }
 
-        if (y>height){
+        if (y > height) {
             y = height;
-        } else if (y<0) {
+        } else if (y < 0) {
             y = 0;
         }
-        return new Point(x,y);
+        return new Point(x, y);
     }
 
 }
